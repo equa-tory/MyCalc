@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private double num1=0, num2=0;
     private String sym = "";
     private String inputNumString = "";
+    private boolean answered = false, dotting = false;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -53,74 +54,11 @@ public class MainActivity extends AppCompatActivity {
         displayText.setText(txt);
     }
     public void btn_num(View v) {
+        if(answered) clear();
         Button btn = (Button)v;
         String btntxt = btn.getText().toString();
         addDText(btntxt);
         inputNumString += btntxt;
-    }
-
-    private void setNum() {
-//        if(num2 != 0) clear();
-        if(!inputNumString.isEmpty()) {
-            if(!sym.isEmpty()) num1 = Double.parseDouble(inputNumString);
-            else num2 = Double.parseDouble(inputNumString);
-            inputNumString = "";
-        }
-    }
-
-    private void SetChar(String c){
-        sym = c;
-        addDText(c);
-    }
-
-    public void btn_plus(View v){
-        if(!inputNumString.isEmpty()) {
-            setNum();
-            SetChar("+");
-        }
-    }
-    public void btn_minus(View v){
-        if(!inputNumString.isEmpty()) {
-            setNum();
-            SetChar("-");
-        }
-    }
-    public void btn_divide(View v){
-        if(!inputNumString.isEmpty()) {
-            setNum();
-            SetChar("/");
-        }
-    }
-    public void btn_multiply(View v){
-        if(!inputNumString.isEmpty()) {
-            setNum();
-            SetChar("*");
-        }
-    }
-    public void btn_equal(View v){
-        setNum();
-        double res = 0;
-        switch (sym){
-            case "+":
-                res = num1 + num2;
-                break;
-            case "-":
-                res = num1 - num2;
-                break;
-            case "*":
-                res = num1 * num2;
-                break;
-            case "/":
-                res = num1 / num2;
-                break;
-        }
-
-        String txt = "=";
-        txt += Double.toString(res);
-        displayText.setText(txt);
-    }
-    public void btn_dot(View v){
-
     }
     private void clear()
     {
@@ -129,10 +67,172 @@ public class MainActivity extends AppCompatActivity {
         num2 = 0;
         inputNumString = "";
         sym = "";
+        answered = false;
+        dotting = false;
     }
 
     public void btn_clear(View v){
         clear();
+    }
+
+    private void setNum() {
+        if(inputNumString.isEmpty()) return;
+        if(!sym.isEmpty()) num1 = Double.parseDouble(inputNumString);
+        else num2 = Double.parseDouble(inputNumString);
+        inputNumString = "";
+        dotting = false;
+    }
+
+    private void SetChar(String c){
+        sym = c;
+        addDText(c);
+    }
+
+    public void btn_plus(View v){
+        if(inputNumString.isEmpty()) return;
+        setNum();
+        SetChar("+");
+    }
+    public void btn_minus(View v){
+        if(inputNumString.isEmpty()) return;
+        setNum();
+        SetChar("-");
+    }
+    public void btn_divide(View v){
+        if(inputNumString.isEmpty()) return;
+        setNum();
+        SetChar("/");
+    }
+    public void btn_multiply(View v){
+        if(inputNumString.isEmpty()) return;
+        setNum();
+        SetChar("*");
+    }
+    public void btn_equal(View v){
+        if(inputNumString.isEmpty()) return;
+        setNum();
+        double res = 0;
+        boolean divzer = false;
+        switch (sym){
+            case "+":
+                res = num2 + num1;
+                break;
+            case "-":
+                res = num2 - num1;
+                break;
+            case "*":
+                res = num2 * num1;
+                break;
+            case "/":
+                try {
+                    res = num2 / num1;
+                } catch (Exception e) {
+                    divzer = true;
+                }
+                break;
+        }
+
+        String txt = "=";
+        if(divzer) txt += "ERR";
+        else txt += Double.toString(res);
+
+        displayText.setText(txt);
+        inputNumString = "";
+        answered = true;
+    }
+
+    /* ============================================TODO======================================= */
+
+    // add - to inputNumString
+    public void btn_plusminus(View v){
+        if(inputNumString.isEmpty()) return;
+        String dt = displayText.getText().toString();
+        if(sym.isEmpty())
+        {
+            if(dt.charAt(0) == '-')
+            {
+                displayText.setText(dt.substring(1));
+
+                // FIX WITH DOT
+                inputNumString = inputNumString.substring(1);
+            }
+            else {
+                String tmp = "-";
+                tmp += dt;
+                displayText.setText(tmp);
+
+                // FIX WITH DOT
+                inputNumString = "-" + inputNumString;
+            }
+        }
+        else {
+            if(inputNumString.charAt(0) == '-')
+            {
+                char[] dtc = dt.toCharArray();
+                for(int i=0;i<dt.length();i++)
+                {
+                    if(dtc[i] == sym.charAt(0))
+                    {
+                        String start = dt.substring(0, i+1);
+                        String end = dt.substring(i + 3);
+                        String res = start + end;
+                        displayText.setText(res);
+                    }
+                }
+                // FIX WITH DOT
+                inputNumString = inputNumString.substring(1);
+            }
+            else {
+                displayText.setText(dt.replace(sym, sym + "(-"));
+
+                // FIX WITH DOT
+                inputNumString = "-" + inputNumString;
+            }
+        }
+    }
+    public void btn_dot(View v){
+        if(inputNumString.isEmpty()) return;
+        String dt = displayText.getText().toString();
+        if(sym.isEmpty())
+        {
+            if((inputNumString.charAt(0) == '.') || (inputNumString.charAt(1) == '.'))
+            {
+                displayText.setText(dt.substring(1));
+                // FIX WITH MINUS
+                inputNumString = inputNumString.substring(1);
+            }
+            else {
+                String tmp = ".";
+                tmp += dt;
+                displayText.setText(tmp);
+                // FIX WITH MINUS
+                inputNumString = "." + inputNumString;
+            }
+        }
+        else {
+            if((inputNumString.charAt(0) == '.') || (inputNumString.charAt(1) == '.'))
+            {
+                char[] dtc = dt.toCharArray();
+                for(int i=0;i<dt.length();i++)
+                {
+                    if(dtc[i] == sym.charAt(0))
+                    {
+                        String start = dt.substring(0, i+1);
+                        String end = dt.substring(i + 2);
+                        String res = start + end;
+                        displayText.setText(res);
+                    }
+                }
+                // FIX WITH MINUS
+                inputNumString = inputNumString.substring(1);
+            }
+            else {
+                displayText.setText(dt.replace(sym, sym + "."));
+
+                // FIX WITH MINUS
+                inputNumString = "." + inputNumString;
+            }
+        }
     }
 
     /*public void doMath(View v)
