@@ -14,25 +14,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
-    //private Button btn_calc;
-    //private EditText inp1, inp2;
-    //private TextView outtext;
-    private EditText displayText;
-    private double num1=0, num2=0;
-    private String sym = "";
-    private String inputNumString = "";
-    private boolean answered = false, dotting = false;
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        displayText = findViewById(R.id.displayText);
-        /*btn_calc = findViewById(R.id.button_calc);
-        inp1 = findViewById(R.id.input1);
-        inp2 = findViewById(R.id.input2);
-        outtext = findViewById(R.id.outtext);*/
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
@@ -43,218 +28,115 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //=================================================================
+    // =================================================================================== //
 
-    private String getDText() {
-        return displayText.getText().toString();
-    }
-    private void addDText(String btntxt){
-        String txt = getDText();
-        txt += btntxt;
-        displayText.setText(txt);
-    }
-    public void btn_num(View v) {
-        if(answered) clear();
-        Button btn = (Button)v;
-        String btntxt = btn.getText().toString();
-        addDText(btntxt);
-        inputNumString += btntxt;
-    }
-    private void clear()
-    {
-        displayText.setText("");
-        num1 = 0;
-        num2 = 0;
-        inputNumString = "";
-        sym = "";
-        answered = false;
-        dotting = false;
-    }
+    private EditText displayText, lastText;
+    private double num1=0, num2=0;
+    private String sym="", inputString="";
+    private boolean answered = false, dotted = false;
 
-    public void btn_clear(View v){
-        clear();
-    }
 
-    private void setNum() {
-        if(inputNumString.isEmpty()) return;
-        if(!sym.isEmpty()) num1 = Double.parseDouble(inputNumString);
-        else num2 = Double.parseDouble(inputNumString);
-        inputNumString = "";
-        dotting = false;
-    }
-
-    private void SetChar(String c){
-        sym = c;
-        addDText(c);
-    }
-
-    public void btn_plus(View v){
-        if(inputNumString.isEmpty()) return;
-        setNum();
-        SetChar("+");
-    }
-    public void btn_minus(View v){
-        if(inputNumString.isEmpty()) return;
-        setNum();
-        SetChar("-");
-    }
-    public void btn_divide(View v){
-        if(inputNumString.isEmpty()) return;
-        setNum();
-        SetChar("/");
-    }
-    public void btn_multiply(View v){
-        if(inputNumString.isEmpty()) return;
-        setNum();
-        SetChar("*");
-    }
-    public void btn_equal(View v){
-        if(inputNumString.isEmpty()) return;
-        setNum();
-        double res = 0;
-        boolean divzer = false;
-        switch (sym){
-            case "+":
-                res = num2 + num1;
-                break;
-            case "-":
-                res = num2 - num1;
-                break;
-            case "*":
-                res = num2 * num1;
-                break;
-            case "/":
-                try {
-                    res = num2 / num1;
-                } catch (Exception e) {
-                    divzer = true;
-                }
-                break;
+    public void btn_num(View v){
+        if(answered) {
+            answered = false;
+            clear();
         }
 
-        String txt = "=";
-        if(divzer) txt += "ERR";
-        else txt += Double.toString(res);
+        if(inputString.equals("0")) return;
+        Button btn = (Button)v;
+        String c = btn.getText().toString();
+        inputString += c;
 
-        displayText.setText(txt);
-        inputNumString = "";
-        answered = true;
+        if(sym == "") num1 = Double.parseDouble(inputString);
+        else num2 = Double.parseDouble(inputString);
+
+        displayText.setText(inputString);
     }
-
-    /* ============================================TODO======================================= */
-
-    // add - to inputNumString
+    public void btn_op(View v){
+        if((inputString == "") || (sym != "")) return;
+        Button btn = (Button)v;
+        sym = btn.getText().toString();
+        inputString = "";
+        lastText.setText(num1+sym);
+        displayText.setText("");
+    }
     public void btn_plusminus(View v){
-        if(inputNumString.isEmpty()) return;
-        String dt = displayText.getText().toString();
-        if(sym.isEmpty())
-        {
-            if(dt.charAt(0) == '-')
-            {
-                displayText.setText(dt.substring(1));
-
-                // FIX WITH DOT
-                inputNumString = inputNumString.substring(1);
-            }
-            else {
-                String tmp = "-";
-                tmp += dt;
-                displayText.setText(tmp);
-
-                // FIX WITH DOT
-                inputNumString = "-" + inputNumString;
-            }
+        if(inputString == "") return;
+        if(sym == "") {
+            num1 = num1 * -1;
+            inputString = Double.toString(num1);
         }
         else {
-            if(inputNumString.charAt(0) == '-')
-            {
-                char[] dtc = dt.toCharArray();
-                for(int i=0;i<dt.length();i++)
-                {
-                    if(dtc[i] == sym.charAt(0))
-                    {
-                        String start = dt.substring(0, i+1);
-                        String end = dt.substring(i + 3);
-                        String res = start + end;
-                        displayText.setText(res);
-                    }
-                }
-                // FIX WITH DOT
-                inputNumString = inputNumString.substring(1);
-            }
-            else {
-                displayText.setText(dt.replace(sym, sym + "(-"));
-
-                // FIX WITH DOT
-                inputNumString = "-" + inputNumString;
-            }
+            num2 = num2 * -1;
+            inputString = Double.toString(num2);
         }
+        inputString = inputString.substring(0, inputString.length()-2);
+        displayText.setText(inputString);
     }
     public void btn_dot(View v){
-        if(inputNumString.isEmpty()) return;
-        String dt = displayText.getText().toString();
-        if(sym.isEmpty())
-        {
-            if((inputNumString.charAt(0) == '.') || (inputNumString.charAt(1) == '.'))
+        if(dotted) {
+            if(inputString.charAt(inputString.length()-1) == '.')
             {
-                displayText.setText(dt.substring(1));
-                // FIX WITH MINUS
-                inputNumString = inputNumString.substring(1);
+                inputString = inputString.substring(0,inputString.length()-1);
+                dotted = false;
             }
-            else {
-                String tmp = ".";
-                tmp += dt;
-                displayText.setText(tmp);
-                // FIX WITH MINUS
-                inputNumString = "." + inputNumString;
-            }
+            else return;
         }
         else {
-            if((inputNumString.charAt(0) == '.') || (inputNumString.charAt(1) == '.'))
-            {
-                char[] dtc = dt.toCharArray();
-                for(int i=0;i<dt.length();i++)
-                {
-                    if(dtc[i] == sym.charAt(0))
-                    {
-                        String start = dt.substring(0, i+1);
-                        String end = dt.substring(i + 2);
-                        String res = start + end;
-                        displayText.setText(res);
-                    }
-                }
-                // FIX WITH MINUS
-                inputNumString = inputNumString.substring(1);
-            }
-            else {
-                displayText.setText(dt.replace(sym, sym + "."));
-
-                // FIX WITH MINUS
-                inputNumString = "." + inputNumString;
-            }
+            inputString += ".";
+            dotted = true;
         }
+        if(sym == "") num1 = Double.parseDouble(inputString);
+        else num2 = Double.parseDouble(inputString);
+        displayText.setText(inputString);
     }
+    public void btn_equal(View v){
+        if((sym == "") || (inputString == "")) return;
 
-    /*public void doMath(View v)
+        lastText.setText(lastText.getText().toString() + num2 + "=");
+
+        double res = -16;
+        boolean divzero = false;
+        switch (sym){
+            case "+":
+                res = num1 + num2;
+                break;
+            case "-":
+                res = num1 - num2;
+                break;
+            case "*":
+                res = num1 * num2;
+                break;
+            case "/":
+                if(num2 == 0) {
+                    clear();
+                    divzero = true;
+                }
+                else res = num1 / num2;
+                break;
+        }
+        if(divzero) displayText.setText("Division on 0!");
+        else displayText.setText(Double.toString(res));
+        answered = true;
+    }
+    public void btn_clear(View v) {clear();}
+    private void clear()
     {
-        if(v.getId() == R.id.button_calc){
-            if(!inp1.getText().toString().equals("")) {
-                if (!inp2.getText().toString().equals("")) {
-                    double n1 = Integer.parseInt(inp1.getText().toString());
-                    double n2 = Integer.parseInt(inp2.getText().toString());
-                    double res = n1 + n2;
-                    outtext.setText(Double.toString(res));
-                }
-            }
-        }
+        num1 = 0;
+        num2 = 0;
+        inputString = "";
+        sym = "";
+        lastText.setText("");
+        displayText.setText("");
+        dotted = false;
     }
 
-    */
 
     @Override
     protected void onStart() {
         super.onStart();
-
         displayText = findViewById(R.id.displayText);
+        lastText = findViewById(R.id.lastText);
     }
+
 }

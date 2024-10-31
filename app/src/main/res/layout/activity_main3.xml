@@ -8,6 +8,27 @@
     android:background="@color/bg"
     tools:context=".MainActivity">
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </TableLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="410dp"
@@ -139,7 +160,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="160dp"
-            android:onClick="btn_op"
+            android:onClick="btn_plus"
             android:text="+"
             app:layout_constraintBottom_toTopOf="@+id/button_minus"
             app:layout_constraintEnd_toEndOf="parent"
@@ -152,7 +173,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="160dp"
-            android:onClick="btn_op"
+            android:onClick="btn_minus"
             android:text="-"
             app:layout_constraintBottom_toTopOf="@+id/button_divide"
             app:layout_constraintEnd_toEndOf="parent"
@@ -165,7 +186,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="160dp"
-            android:onClick="btn_op"
+            android:onClick="btn_divide"
             android:text="/"
             app:layout_constraintBottom_toTopOf="@+id/button_multiply"
             app:layout_constraintEnd_toEndOf="parent"
@@ -179,7 +200,7 @@
             android:layout_height="0dp"
             android:layout_marginEnd="160dp"
             android:layout_marginBottom="135dp"
-            android:onClick="btn_op"
+            android:onClick="btn_multiply"
             android:text="*"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -268,28 +289,10 @@
             android:id="@+id/displayText"
             android:layout_width="344dp"
             android:layout_height="50dp"
-            android:focusable="false"
             android:hint="Enter num"
             android:inputType="number"
-            android:textAlignment="textEnd"
+            android:text=""
             android:textColor="#FFFFFF"
-            android:textSize="25dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/lastText"
-            android:layout_width="344dp"
-            android:layout_height="50dp"
-            android:layout_marginBottom="100dp"
-            android:focusable="false"
-            android:hint="Enter num"
-            android:inputType="number"
-            android:textAlignment="textEnd"
-            android:textColor="#787878"
-            android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
