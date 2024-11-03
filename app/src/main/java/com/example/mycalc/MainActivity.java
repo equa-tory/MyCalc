@@ -120,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
         answered = true;
     }
     public void btn_clear(View v) {clear();}
-    private void clear()
-    {
+    private void clear() {
         num1 = 0;
         num2 = 0;
         inputString = "";
@@ -129,6 +128,13 @@ public class MainActivity extends AppCompatActivity {
         lastText.setText("");
         displayText.setText("");
         dotted = false;
+    }
+    public void backspace(){
+        if(inputString == "") return;
+        displayText.setText(inputString);
+        if(sym == "") num1 = Double.parseDouble(inputString);
+        else num2 = Double.parseDouble(inputString);
+        inputString = inputString.substring(0, inputString.length());
     }
 
 
