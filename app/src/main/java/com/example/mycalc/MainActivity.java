@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         displayText.setText(inputString);
     }
     public void btn_equal(View v){
+        if(answered) return;
         if((sym == "") || (inputString == "")) return;
 
         lastText.setText(lastText.getText().toString() + num2 + "=");
