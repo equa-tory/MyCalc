@@ -61,7 +61,11 @@ public class MainActivity extends AppCompatActivity {
         displayText.setText("");
     }
     public void btn_plusminus(View v){
+        if(answered) return;
         if(inputString == "") return;
+
+        char lastInputChar = inputString.charAt(inputString.length()-1);
+
         if(sym == "") {
             num1 = num1 * -1;
             inputString = Double.toString(num1);
@@ -70,10 +74,28 @@ public class MainActivity extends AppCompatActivity {
             num2 = num2 * -1;
             inputString = Double.toString(num2);
         }
-        inputString = inputString.substring(0, inputString.length()-2);
+        if(!dotted) inputString = inputString.substring(0, inputString.length()-2);
+        else if(lastInputChar == '.') inputString = inputString.substring(0, inputString.length()-1);
         displayText.setText(inputString);
     }
     public void btn_dot(View v){
+        if(answered) return;
+        if(inputString == "") {
+            if(answered) {
+                answered = false;
+                clear();
+            }
+
+            if(inputString.equals("0")) clear();
+            Button btn = (Button)v;
+            String c = btn.getText().toString();
+            inputString += c;
+
+            if(sym == "") num1 = Double.parseDouble(inputString);
+            else num2 = Double.parseDouble(inputString);
+
+            displayText.setText(inputString);
+        }
         if(dotted) {
             if(inputString.charAt(inputString.length()-1) == '.')
             {
@@ -129,12 +151,21 @@ public class MainActivity extends AppCompatActivity {
         displayText.setText("");
         dotted = false;
     }
-    public void backspace(){
+    public void btn_backspace(View v){
+        if(answered) return;
         if(inputString == "") return;
+
+        if(inputString.charAt(inputString.length()-1) == '.') dotted = false;
+        inputString = inputString.substring(0, inputString.length()-1);
+        if(inputString.equals("")) {
+            if(sym == "") num1 = 0;
+            else num2 = 0;
+        }
+        else {
+            if(sym == "") num1 = Double.parseDouble(inputString);
+            else num2 = Double.parseDouble(inputString);
+        }
         displayText.setText(inputString);
-        if(sym == "") num1 = Double.parseDouble(inputString);
-        else num2 = Double.parseDouble(inputString);
-        inputString = inputString.substring(0, inputString.length());
     }
 
 
